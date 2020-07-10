@@ -1,6 +1,8 @@
-package hello
+package config
 
 import (
+	"github.com/mrutman/simple-api/pkg/config"
+
 	"github.com/emicklei/go-restful"
 )
 
@@ -27,7 +29,7 @@ func (c *Resource) Register(container *restful.Container) *Resource {
 
 	ws.Route(ws.GET("").To(c.GetConfig).
 		Doc("Returns current config").
-		Operation("operation returns current config").
+		Operation("operation returns current config"))
 
 	container.Add(ws)
 
@@ -36,5 +38,5 @@ func (c *Resource) Register(container *restful.Container) *Resource {
 
 // GetConfig returns current config
 func (c *Resource) GetConfig(request *restful.Request, response *restful.Response) {
-	response.WriteEntity("conig")
+	response.WriteEntity(config.GetSimpleAPIConfigFromEnv())
 }

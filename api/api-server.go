@@ -19,7 +19,7 @@ import (
 
 // Server is HTTP Server for API.
 type Server struct {
-	api *v1alfa.SimpleAPI
+	api *v1impl.SimpleAPI
 }
 
 // logger for API server.
@@ -27,7 +27,7 @@ var logger = loggo.GetLogger("API")
 
 // NewServer creates a new Kublr API server but does not configure it.
 // Call RegisterAndServe to register REST endpoints and start serving.
-func NewServer(api *v1alfa.SimpleAPI) *Server {
+func NewServer(api *v1impl.SimpleAPI) *Server {
 	server := &Server{
 		api: api,
 	}

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+API_URL=http://localhost:8080
+
+curl -k -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header "Authorization: bearer ${API_TOKEN}"  $API_URL/api/db/${1}
+echo

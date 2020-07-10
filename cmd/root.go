@@ -18,7 +18,7 @@ func Run() {
 	logger.Errorf("run")
 	logger.Infof("run")
 
-	simpleAPI := v1alfa.NewSimpleAPI()
+	simpleAPI := v1impl.NewSimpleAPI()
 
 	simpleServer := api.NewServer(simpleAPI)
 	if err := simpleServer.RegisterAndServe(); err != nil {

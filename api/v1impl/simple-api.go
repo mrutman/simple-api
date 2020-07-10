@@ -1,4 +1,4 @@
-package v1
+package v1impl
 
 import (
 	"log"
@@ -8,6 +8,7 @@ import (
 	"github.com/juju/loggo"
 
 	"github.com/mrutman/simple-api/api/v1impl/config"
+	"github.com/mrutman/simple-api/api/v1impl/db"
 )
 
 var logger = loggo.GetLogger("SimpleAPI")
@@ -32,5 +33,6 @@ func NewSimpleAPI() *SimpleAPI {
 // Register registers REST resources in container.
 func (api *SimpleAPI) Register(wsContainer *restful.Container, insecure bool) error {
 	config.NewResource().Register(wsContainer)
+	db.NewResource().Register(wsContainer)
 	return nil
 }
