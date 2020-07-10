@@ -7,4 +7,4 @@ export SIMPLEAPI_DB_PORT="3333"
 export SIMPLEAPI_DB_USER="admin"
 export SIMPLEAPI_DB_PASSWORD="1q2w3e"
 
-exec ./simple-api
+exec ./target/simple-api

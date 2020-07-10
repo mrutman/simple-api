@@ -15,3 +15,6 @@
 # vendor/
 
 *.swp
+
+target/**
+!target/.gitkeep

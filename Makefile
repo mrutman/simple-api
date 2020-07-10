@@ -1,5 +1,5 @@
 all:
-	go build
+	env GOOS=linux GARCH=amd64 CGO_ENABLED=0 go build -o ./target/simple-api
 
 clean:
-	rm -rf ./simple-api
+	rm -rf ./target/simple-api
