@@ -38,5 +38,5 @@ func (c *Resource) Register(container *restful.Container) *Resource {
 
 // GetConfig returns current config
 func (c *Resource) GetConfig(request *restful.Request, response *restful.Response) {
-	response.WriteEntity(config.GetSimpleAPIConfigFromEnv())
+	response.WriteEntity(config.GetSimpleAPIConfig())
 }

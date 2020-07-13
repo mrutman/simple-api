@@ -8,13 +8,13 @@ import (
 	"os"
 	"path"
 	"runtime"
-	"strconv"
+
+	"github.com/mrutman/simple-api/api/v1impl"
+	"github.com/mrutman/simple-api/pkg/config"
 
 	"github.com/emicklei/go-restful"
-	swagger "github.com/emicklei/go-restful-swagger12"
 	"github.com/gorilla/handlers"
 	"github.com/juju/loggo"
-	"github.com/mrutman/simple-api/api/v1impl"
 )
 
 // Server is HTTP Server for API.
@@ -46,27 +46,16 @@ func (apiServer *Server) RegisterAndServe() error {
 		return err
 	}
 
-	// Configure Swagger UI
-	swaggerConfig := swagger.Config{
-		WebServices:    wsContainer.RegisteredWebServices(), // you control what services are visible
-		WebServicesUrl: "http://localhost:8888",
-		ApiPath:        "/swagger.json",
-
-		// specify where the UI is located
-		SwaggerPath:     "/apidocs/",
-		SwaggerFilePath: "swagger-ui"}
-	swagger.RegisterSwaggerService(swaggerConfig, wsContainer)
-
 	return apiServer.serve(wsContainer)
 }
 
 // serve starts HTTP serving.
 func (apiServer *Server) serve(wsContainer *restful.Container) error {
-	port := 8080
-	log.Printf("start listening on localhost:%d", port)
+	cfg := config.GetSimpleAPIConfig()
+	log.Printf("start listening on localhost:%s", cfg.ServerPort)
 
 	server := &http.Server{
-		Addr:    ":" + strconv.Itoa(port),
+		Addr:    ":" + cfg.ServerPort,
 		Handler: handlers.LoggingHandler(os.Stdout, wsContainer),
 	}
 

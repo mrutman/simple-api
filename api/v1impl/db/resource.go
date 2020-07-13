@@ -2,14 +2,16 @@ package db
 
 import (
 	"fmt"
-	"time"
+	"net/http"
+
+	"github.com/mrutman/simple-api/pkg/db"
 
 	"github.com/emicklei/go-restful"
 	"github.com/juju/loggo"
 )
 
 var (
-	logger = loggo.GetLogger("db")
+	logger = loggo.GetLogger("ep-db")
 )
 
 const (
@@ -22,7 +24,6 @@ type Resource struct {
 
 // NewResource creates new instance.
 func NewResource() *Resource {
-	records = make(map[string]string)
 	return &Resource{}
 }
 
@@ -55,29 +56,37 @@ func (c *Resource) Register(container *restful.Container) *Resource {
 	return c
 }
 
-type Record struct {
-	Endpoint  string `json:"endpoint" yaml:"endpoint"`
-	Timestamp string `json:"timestamp" yaml:"timestamp"`
-}
-
-var records map[string]string
-
 // GetAllRecords gets all record
 func (c *Resource) GetAllRecords(request *restful.Request, response *restful.Response) {
-	response.WriteEntity(records)
+	all, err := db.GetAllSimpleRecords()
+	if err != nil {
+		err = response.WriteHeaderAndEntity(http.StatusInternalServerError,
+			fmt.Sprintf("Failed to get all records: '%v'", err))
+		if err != nil {
+			logger.Errorf("Error: '%v'", err)
+		}
+		return
+	}
+
+	response.WriteEntity(all)
 }
 
 // GetRecord gets record
 func (c *Resource) GetRecord(request *restful.Request, response *restful.Response) {
 	name := request.PathParameter(newEndpointName)
-	response.WriteEntity(records[name])
+	simpleRecord, err := db.GetSimpleRecord(name)
+	if err != nil {
+		err = response.WriteHeaderAndEntity(http.StatusInternalServerError,
+			fmt.Sprintf("Failed to get record for '%s': '%v'", name, err))
+		if err != nil {
+			logger.Errorf("Error: '%v'", err)
+		}
+		return
+	}
+	response.WriteEntity(simpleRecord)
 }
 
 // CreateRecord creates new record
 func (c *Resource) CreateRecord(request *restful.Request, response *restful.Response) {
-	name := request.PathParameter(newEndpointName)
-
-	records[name] = time.Now().String()
-
-	response.WriteEntity("success")
+	c.GetRecord(request, response)
 }

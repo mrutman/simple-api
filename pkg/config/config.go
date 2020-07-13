@@ -17,10 +17,14 @@ type SimpleAPIConfig struct {
 
 // DBConnectionParameters contains DB connection parameters
 type DBConnectionParameters struct {
-	Url      string `json:"url" yaml:"url"`
+	Host     string `json:"host" yaml:"host"`
 	Port     string `json:"port" yaml:"port"`
 	User     string `json:"user" yaml:"user"`
 	Password string `json:"password" yaml:"password"`
+}
+
+func GetSimpleAPIConfig() *SimpleAPIConfig {
+	return GetSimpleAPIConfigFromEnv()
 }
 
 func GetSimpleAPIConfigFromEnv() *SimpleAPIConfig {
@@ -32,7 +36,7 @@ func GetSimpleAPIConfigFromEnv() *SimpleAPIConfig {
 	return &SimpleAPIConfig{
 		ServerPort: serverPort,
 		DBConnParam: &DBConnectionParameters{
-			Url:      os.Getenv("SIMPLEAPI_DB_URL"),
+			Host:     os.Getenv("SIMPLEAPI_DB_HOST"),
 			Port:     os.Getenv("SIMPLEAPI_DB_PORT"),
 			User:     os.Getenv("SIMPLEAPI_DB_USER"),
 			Password: os.Getenv("SIMPLEAPI_DB_PASSWORD"),
