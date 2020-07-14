@@ -9,6 +9,7 @@ import (
 
 	"github.com/mrutman/simple-api/api/v1impl/config"
 	"github.com/mrutman/simple-api/api/v1impl/db"
+	"github.com/mrutman/simple-api/api/v1impl/health"
 )
 
 var logger = loggo.GetLogger("SimpleAPI")
@@ -34,5 +35,6 @@ func NewSimpleAPI() *SimpleAPI {
 func (api *SimpleAPI) Register(wsContainer *restful.Container, insecure bool) error {
 	config.NewResource().Register(wsContainer)
 	db.NewResource().Register(wsContainer)
+	health.NewResource().Register(wsContainer)
 	return nil
 }
