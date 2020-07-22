@@ -13,8 +13,8 @@ import (
 
 const (
 	sqlDB     = "mysql"
-	dbName    = "dbSimpleAPI"
-	tableName = "tableSimpleAPI"
+	dbName    = "dbsimpleapi"
+	tableName = "tablesimpleapi"
 )
 
 var (
@@ -74,11 +74,13 @@ func connectDB() (*sqlx.DB, error) {
 		return nil, err
 	}
 
-	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", dbName))
-	if err != nil {
-		logger.Errorf("Failed to create DB '%s': '%v'", dbName, err)
-		db.Close()
-		return nil, err
+	if !cfg.DBParam.SkipCreateDB {
+		_, err = db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", dbName))
+		if err != nil {
+			logger.Infof("Failed to create DB '%s': '%v'", dbName, err)
+			db.Close()
+			return nil, err
+		}
 	}
 
 	_, err = db.Exec(fmt.Sprintf("USE %s", dbName))
@@ -88,12 +90,14 @@ func connectDB() (*sqlx.DB, error) {
 		return nil, err
 	}
 
-	schema := fmt.Sprintf("CREATE TABLE IF NOT EXISTS `%s` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `endpoint` varchar(255) NOT NULL, `ts` timestamp)", tableName)
-	db.Exec(schema)
-	if err != nil {
-		logger.Errorf("Failed to create table '%s' in DB '%s': '%v'", tableName, dbName, err)
-		db.Close()
-		return nil, err
+	if !cfg.DBParam.SkipCreateTables {
+		schema := fmt.Sprintf("CREATE TABLE IF NOT EXISTS `%s` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `endpoint` varchar(255) NOT NULL, `ts` datetime)", tableName)
+		db.Exec(schema)
+		if err != nil {
+			logger.Errorf("Failed to create table '%s' in DB '%s': '%v'", tableName, dbName, err)
+			db.Close()
+			return nil, err
+		}
 	}
 
 	return db, nil
@@ -111,7 +115,7 @@ func getSimpleRecord(db *sqlx.DB, endpoint string) (*SimpleRecord, error) {
 }
 
 func addSimpleRecord(db *sqlx.DB, endpoint string) (*SimpleRecord, error) {
-	_, err := db.Exec(fmt.Sprintf("INSERT INTO %s (endpoint) VALUES(\"%s\")", tableName, endpoint))
+	_, err := db.Exec(fmt.Sprintf("INSERT INTO %s (endpoint, ts) VALUES('%s', NOW())", tableName, endpoint))
 	if err != nil {
 		logger.Errorf("Failed to add record for '%s' to table '%s': '%v'", endpoint, tableName, err)
 		return nil, err
